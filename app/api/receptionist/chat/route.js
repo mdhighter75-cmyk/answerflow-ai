@@ -1,4 +1,4 @@
-import { buildReceptionistPrompt, mockReceptionistReply } from '../../../lib/receptionistPrompt';
+import { buildReceptionistPrompt, mockReceptionistReply } from '../../../../lib/receptionistPrompt'
 
 export async function POST(req) {
   try {
