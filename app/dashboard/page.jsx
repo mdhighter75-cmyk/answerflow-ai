@@ -25,6 +25,20 @@ export default function Dashboard() {
     setLoading(false);
   };
 
+  const handleUpgrade = async (plan) => {
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan, email: 'user@example.com' })
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    } catch {
+      alert('Checkout failed. Please try again.');
+    }
+  };
+
   const saveSettings = () => { setSaved(true); setTimeout(() => setSaved(false), 3000); };
 
   return (
@@ -56,16 +70,6 @@ export default function Dashboard() {
                   <div style={{ fontSize: '24px', marginBottom: '8px' }}>{icon}</div>
                   <div style={{ fontSize: '28px', fontWeight: '800', marginBottom: '4px' }}>{val}</div>
                   <div style={{ color: '#9ca3af', fontSize: '13px' }}>{label}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ background: '#111827', border: '1px solid #3b82f6', borderRadius: '12px', padding: '24px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '16px' }}>🚀 Get Started</h3>
-              {[['1', 'Set up your business profile', 'settings'], ['2', 'Test your AI receptionist', 'receptionist'], ['3', 'Choose a plan', 'billing']].map(([step, label, tab]) => (
-                <div key={step} onClick={() => setActiveTab(tab)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: '1px solid #1f2937', cursor: 'pointer' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#1f2937', border: '2px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: '700', color: '#9ca3af', flexShrink: 0 }}>{step}</div>
-                  <span style={{ color: '#d1d5db', fontSize: '14px' }}>{label}</span>
-                  <span style={{ marginLeft: 'auto', color: '#3b82f6', fontSize: '13px' }}>→</span>
                 </div>
               ))}
             </div>
@@ -102,7 +106,7 @@ export default function Dashboard() {
             <h1 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '8px' }}>Business Settings</h1>
             <p style={{ color: '#9ca3af', marginBottom: '32px' }}>This information trains your AI receptionist.</p>
             <div style={{ maxWidth: '600px' }}>
-              {[['name', 'Business Name', 'e.g. Mike\'s Auto Shop'], ['hours', 'Business Hours', 'e.g. Mon-Fri 8am-6pm'], ['services', 'Services Offered', 'e.g. Oil changes, tire rotation...'], ['phone', 'Phone Number', 'e.g. (555) 123-4567'], ['address', 'Address', 'e.g. 123 Main St, Chicago, IL'], ['greeting', 'Custom Greeting', 'e.g. Thank you for calling!']].map(([key, label, placeholder]) => (
+              {[['name', 'Business Name', "e.g. Mike's Auto Shop"], ['hours', 'Business Hours', 'e.g. Mon-Fri 8am-6pm'], ['services', 'Services Offered', 'e.g. Oil changes, tire rotation...'], ['phone', 'Phone Number', 'e.g. (555) 123-4567'], ['address', 'Address', 'e.g. 123 Main St, Chicago, IL'], ['greeting', 'Custom Greeting', 'e.g. Thank you for calling!']].map(([key, label, placeholder]) => (
                 <div key={key} style={{ marginBottom: '20px' }}>
                   <label style={{ display: 'block', color: '#d1d5db', fontSize: '14px', fontWeight: '500', marginBottom: '6px' }}>{label}</label>
                   <input value={form[key]} onChange={e => setForm({ ...form, [key]: e.target.value })} placeholder={placeholder} style={{ width: '100%', background: '#111827', border: '1px solid #374151', borderRadius: '8px', padding: '10px 14px', color: '#f9fafb', fontSize: '14px', outline: 'none' }} />
@@ -135,12 +139,12 @@ export default function Dashboard() {
             <h1 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '8px' }}>Billing & Plans</h1>
             <p style={{ color: '#9ca3af', marginBottom: '32px' }}>You are currently on the free trial.</p>
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-              {[['Starter', '$49/mo', '100 calls/month'], ['Pro', '$149/mo', '500 calls/month'], ['Business', '$299/mo', 'Unlimited calls']].map(([name, price, calls]) => (
+              {[['Starter', '$49/mo', '100 calls/month', 'starter'], ['Pro', '$149/mo', '500 calls/month', 'pro'], ['Business', '$299/mo', 'Unlimited calls', 'business']].map(([name, price, calls, plan]) => (
                 <div key={name} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '24px', minWidth: '200px' }}>
                   <h3 style={{ fontWeight: '700', marginBottom: '8px' }}>{name}</h3>
                   <div style={{ fontSize: '28px', fontWeight: '800', marginBottom: '8px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{price}</div>
                   <p style={{ color: '#9ca3af', fontSize: '13px', marginBottom: '16px' }}>{calls}</p>
-                  <button style={{ width: '100%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px', fontWeight: '600', cursor: 'pointer' }}>Upgrade</button>
+                  <button onClick={() => handleUpgrade(plan)} style={{ width: '100%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px', fontWeight: '600', cursor: 'pointer' }}>Upgrade</button>
                 </div>
               ))}
             </div>
