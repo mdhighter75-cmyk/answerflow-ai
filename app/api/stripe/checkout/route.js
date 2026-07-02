@@ -40,7 +40,9 @@ export async function POST(req) {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/dashboard?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/dashboard?canceled=true`,
-      metadata: { plan },
+      ...(email ? { client_reference_id: email } : {}),
+      metadata: { plan, ...(email ? { email } : {}) },
+      subscription_data: { metadata: { plan, ...(email ? { email } : {}) } },
     });
 
     return NextResponse.json({ url: session.url, sessionId: session.id });

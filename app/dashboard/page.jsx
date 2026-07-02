@@ -13,17 +13,42 @@ export default function Dashboard() {
   const [form, setForm] = useState({ name: '', hours: '', services: '', phone: '', address: '', greeting: '', faqs: '' });
   const [saved, setSaved] = useState(false);
   const [userEmail, setUserEmail] = useState('');
+  const [userId, setUserId] = useState('');
+  const [plan, setPlan] = useState('trial');
   const [upgrading, setUpgrading] = useState('');
   const [billingError, setBillingError] = useState('');
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [settingsError, setSettingsError] = useState('');
 
   useEffect(() => {
     const supabase = createBrowserSupabase();
-    supabase.auth.getUser().then(({ data }) => {
-      if (data?.user) {
-        setUserEmail(data.user.email);
-      } else {
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!data?.user) {
         router.push('/login');
+        return;
       }
+      const user = data.user;
+      setUserEmail(user.email);
+      setUserId(user.id);
+
+      const { data: biz } = await supabase
+        .from('businesses')
+        .select('name, hours, services, phone, address, greeting, faqs')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (biz) {
+        setForm({
+          name: biz.name || '', hours: biz.hours || '', services: biz.services || '',
+          phone: biz.phone || '', address: biz.address || '', greeting: biz.greeting || '', faqs: biz.faqs || '',
+        });
+      }
+
+      const { data: sub } = await supabase
+        .from('subscriptions')
+        .select('plan, status')
+        .eq('email', user.email)
+        .maybeSingle();
+      if (sub && sub.status === 'active' && sub.plan) setPlan(sub.plan);
     });
   }, [router]);
 
@@ -63,7 +88,23 @@ export default function Dashboard() {
     }
   };
 
-  const saveSettings = () => { setSaved(true); setTimeout(() => setSaved(false), 3000); };
+  const saveSettings = async () => {
+    if (savingSettings || !userId) return;
+    setSettingsError('');
+    setSavingSettings(true);
+    try {
+      const supabase = createBrowserSupabase();
+      const { error } = await supabase
+        .from('businesses')
+        .upsert({ user_id: userId, ...form }, { onConflict: 'user_id' });
+      if (error) throw error;
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      setSettingsError(err.message || 'Could not save settings.');
+    }
+    setSavingSettings(false);
+  };
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
@@ -89,8 +130,8 @@ export default function Dashboard() {
             <h1 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '8px' }}>Dashboard</h1>
             <p style={{ color: '#9ca3af', marginBottom: '32px' }}>Welcome to AnswerFlow AI.</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '40px' }}>
-              {[['📞', '0', 'Calls This Month'], ['📅', '0', 'Appointments'], ['💬', '0', 'Messages'], ['⭐', 'Trial', 'Plan Status']].map(([icon, val, label]) => (
-                <div key={label} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '20px' }}>
+              {[['📞', '0', 'Calls This Month'], ['📅', '0', 'Appointments'], ['💬', '0', 'Messages'], ['⭐', plan === 'trial' ? 'Trial' : plan.charAt(0).toUpperCase() + plan.slice(1), 'Plan Status']].map(([icon, val, label]) => (
+                <div key={label} data-testid={`stat-${label.toLowerCase().replace(/ /g, '-')}`} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '20px' }}>
                   <div style={{ fontSize: '24px', marginBottom: '8px' }}>{icon}</div>
                   <div style={{ fontSize: '28px', fontWeight: '800', marginBottom: '4px' }}>{val}</div>
                   <div style={{ color: '#9ca3af', fontSize: '13px' }}>{label}</div>
@@ -140,8 +181,9 @@ export default function Dashboard() {
                 <label style={{ display: 'block', color: '#d1d5db', fontSize: '14px', fontWeight: '500', marginBottom: '6px' }}>FAQs</label>
                 <textarea value={form.faqs} onChange={e => setForm({ ...form, faqs: e.target.value })} placeholder="Q: Do you do same-day service?&#10;A: Yes, call early to schedule." rows={4} style={{ width: '100%', background: '#111827', border: '1px solid #374151', borderRadius: '8px', padding: '10px 14px', color: '#f9fafb', fontSize: '14px', outline: 'none', resize: 'vertical' }} />
               </div>
-              <button onClick={saveSettings} style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', border: 'none', borderRadius: '8px', padding: '12px 32px', fontWeight: '700', fontSize: '15px', cursor: 'pointer' }}>
-                {saved ? '✓ Saved!' : 'Save Settings'}
+              {settingsError && <div data-testid="settings-error" style={{ background: '#450a0a', border: '1px solid #7f1d1d', borderRadius: '8px', padding: '12px', marginBottom: '20px', color: '#fca5a5', fontSize: '14px' }}>{settingsError}</div>}
+              <button data-testid="save-settings-button" onClick={saveSettings} disabled={savingSettings} style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', border: 'none', borderRadius: '8px', padding: '12px 32px', fontWeight: '700', fontSize: '15px', cursor: savingSettings ? 'not-allowed' : 'pointer', opacity: savingSettings ? 0.7 : 1 }}>
+                {savingSettings ? 'Saving…' : saved ? '✓ Saved!' : 'Save Settings'}
               </button>
             </div>
           </>
@@ -161,17 +203,20 @@ export default function Dashboard() {
         {activeTab === 'billing' && (
           <>
             <h1 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '8px' }}>Billing & Plans</h1>
-            <p style={{ color: '#9ca3af', marginBottom: '32px' }}>You are currently on the free trial.</p>
+            <p style={{ color: '#9ca3af', marginBottom: '32px' }}>{plan === 'trial' ? 'You are currently on the free trial.' : `You are currently on the ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan.`}</p>
             {billingError && <div data-testid="billing-error" style={{ background: '#450a0a', border: '1px solid #7f1d1d', borderRadius: '8px', padding: '12px', marginBottom: '20px', color: '#fca5a5', fontSize: '14px', maxWidth: '640px' }}>{billingError}</div>}
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-              {[['Starter', '$49/mo', '100 calls/month', 'starter'], ['Pro', '$149/mo', '500 calls/month', 'pro'], ['Business', '$299/mo', 'Unlimited calls', 'business']].map(([name, price, calls, plan]) => (
-                <div key={name} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '24px', minWidth: '200px' }}>
+              {[['Starter', '$49/mo', '100 calls/month', 'starter'], ['Pro', '$149/mo', '500 calls/month', 'pro'], ['Business', '$299/mo', 'Unlimited calls', 'business']].map(([name, price, calls, planId]) => {
+                const isCurrent = plan === planId;
+                return (
+                <div key={name} style={{ background: '#111827', border: isCurrent ? '1px solid #3b82f6' : '1px solid #1f2937', borderRadius: '12px', padding: '24px', minWidth: '200px' }}>
                   <h3 style={{ fontWeight: '700', marginBottom: '8px' }}>{name}</h3>
                   <div style={{ fontSize: '28px', fontWeight: '800', marginBottom: '8px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{price}</div>
                   <p style={{ color: '#9ca3af', fontSize: '13px', marginBottom: '16px' }}>{calls}</p>
-                  <button data-testid={`upgrade-${plan}-button`} onClick={() => handleUpgrade(plan)} disabled={!!upgrading} style={{ width: '100%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px', fontWeight: '600', cursor: upgrading ? 'not-allowed' : 'pointer', opacity: upgrading && upgrading !== plan ? 0.5 : 1 }}>{upgrading === plan ? 'Redirecting…' : 'Upgrade'}</button>
+                  <button data-testid={`upgrade-${planId}-button`} onClick={() => handleUpgrade(planId)} disabled={!!upgrading || isCurrent} style={{ width: '100%', background: isCurrent ? '#1f2937' : 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: isCurrent ? '#9ca3af' : '#fff', border: 'none', borderRadius: '8px', padding: '10px', fontWeight: '600', cursor: (upgrading || isCurrent) ? 'not-allowed' : 'pointer', opacity: upgrading && upgrading !== planId ? 0.5 : 1 }}>{isCurrent ? 'Current Plan' : upgrading === planId ? 'Redirecting…' : 'Upgrade'}</button>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}

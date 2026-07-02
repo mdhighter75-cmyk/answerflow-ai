@@ -25,14 +25,25 @@ project at all. Two compounding bugs made it fail *silently*:
 | 5 | Medium | `app/api/stripe/checkout/route.js` | Validates plan, returns clear messages for missing price IDs, derives redirect URLs from the request origin (robust across preview/prod), adds `{CHECKOUT_SESSION_ID}` + plan metadata. |
 | 6 | Medium | `app/api/webhooks/stripe/route.js` | Guards missing `STRIPE_WEBHOOK_SECRET`, uses `getStripe()`, marks route `force-dynamic`. |
 
-## Known gaps (not blocking, recommend as next steps)
+## Known gaps (remaining next steps)
 
-- **Webhook is a no-op beyond logging.** `checkout.session.completed` / `subscription.deleted`
-  don't persist plan state to Supabase yet, so a paid user's plan won't update automatically.
-- **Business Settings don't persist.** The Save button only updates local React state;
-  it should write to the Supabase `businesses` table.
-- **Dashboard stats are hardcoded** (0 calls, Trial, etc.) — not yet wired to real data.
+- **Dashboard stats are hardcoded** (0 calls, appointments, messages) — not yet wired to real data.
 - **OpenAI model** is `gpt-3.5-turbo` (legacy); consider upgrading.
+- Webhook → Supabase and Business Settings persistence are now implemented (see below).
+
+## Follow-up work added (webhook + settings persistence)
+
+- **Stripe webhook now updates plans in Supabase.** On `checkout.session.completed` it upserts
+  the user's `plan`/`status` into a new `subscriptions` table (keyed by email); on
+  `customer.subscription.deleted` it marks the subscription `canceled`.
+- **Business Settings persist to Supabase.** The dashboard loads the user's saved
+  `businesses` row on mount and upserts on Save (with saving/error states).
+- **Plan shown live in the dashboard** — Overview "Plan Status" card and Billing tab reflect
+  the active plan; the current plan's button shows "Current Plan" instead of "Upgrade".
+- New files: `lib/supabaseAdmin.js` (service-role client, server-only), updated `supabase/schema.sql`
+  (adds `subscriptions` table + RLS, unique constraint on `businesses.user_id`).
+- **New env var required:** `SUPABASE_SERVICE_ROLE_KEY` (server-only, for the webhook).
+- **Run the updated `supabase/schema.sql`** in the Supabase SQL editor before going live.
 
 ## Setup required to go live (on Vercel)
 
