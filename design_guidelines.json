@@ -1,0 +1,107 @@
+{
+  "project_name": "AnswerFlow AI",
+  "theme_and_archetype": {
+    "archetype": "Archetype 4: Swiss & High-Contrast (Light Theme) tuned for Premium B2B Trust",
+    "rationale": "For a B2B AI receptionist, the current dark blue/purple 'AI slop' gradient looks cheap and generic. Transitioning to a high-contrast, 'Old Money Tech' light theme (Alabaster background, deep Charcoal text, Forest Green accents) establishes immediate trust, looks extremely premium, and appeals to small business owners wanting a professional, reliable image."
+  },
+  "typography": {
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap",
+    "headings": {
+      "family": "'Bricolage Grotesque', sans-serif",
+      "weights": [500, 700],
+      "usage": "Use tight letter spacing (tracking-tight or -0.02em). Expressive, structural, and bold for H1-H4."
+    },
+    "body": {
+      "family": "'DM Sans', sans-serif",
+      "weights": [400, 500, 600],
+      "usage": "Clean, highly legible geometric sans for all body copy, inputs, and UI elements."
+    },
+    "scale": {
+      "h1": "font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; letter-spacing: -0.02em; font-family: 'Bricolage Grotesque', sans-serif;",
+      "h2": "font-size: clamp(2rem, 4vw, 3rem); line-height: 1.2; letter-spacing: -0.01em; font-family: 'Bricolage Grotesque', sans-serif;",
+      "h3": "font-size: 1.5rem; line-height: 1.3; font-family: 'Bricolage Grotesque', sans-serif;",
+      "body": "font-size: 1rem; line-height: 1.6; font-family: 'DM Sans', sans-serif;",
+      "small": "font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'DM Sans', sans-serif;"
+    }
+  },
+  "color_palette": {
+    "css_variables": {
+      "--bg-primary": "#F4F4F0",
+      "--bg-surface": "#FFFFFF",
+      "--text-primary": "#0A0A0A",
+      "--text-secondary": "#52525B",
+      "--accent-primary": "#064E3B",
+      "--accent-hover": "#022C22",
+      "--accent-light": "#ECFDF5",
+      "--border-color": "#E5E5E5",
+      "--error": "#DC2626",
+      "--success": "#16A34A"
+    },
+    "rationale": "F4F4F0 (Alabaster/Oat) acts as a warm, inviting base that reduces eye strain compared to stark white. Pure white (--bg-surface) stands out crisply for cards. Deep Forest Green (#064E3B) is used for primary CTAs to evoke growth, stability, and financial health, immediately replacing generic AI aesthetic."
+  },
+  "layout_and_spacing": {
+    "philosophy": "Generous spacing. Allow content to breathe. Use a strict bento-box inspired grid for the dashboard, and a sweeping, asymmetrical layout for marketing pages.",
+    "marketing_pages": "Use large vertical padding (e.g., padding: '6rem 2rem'). Avoid center-aligning everything; left-aligned dense typography paired with high-quality images creates a structural, editorial feel.",
+    "dashboard": "Use a tight 'Control Room' grid. Sidebar width: 260px. Dashboard background: var(--bg-primary). Dashboard cards: pure white, 1px border, minimal flat look.",
+    "borders_and_radius": "Radius is minimal but present to soften the brutalism: 12px for large cards, 8px for buttons and inputs. Borders are always 1px solid var(--border-color)."
+  },
+  "components": {
+    "buttons": {
+      "primary": "background: var(--accent-primary); color: #fff; border: none; border-radius: 8px; padding: 0.75rem 1.5rem; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: background 0.2s ease; cursor: pointer;",
+      "secondary": "background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1.5rem; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all 0.2s ease; cursor: pointer;",
+      "hover_states": "Primary darkens to var(--accent-hover). Secondary border darkens to var(--text-primary)."
+    },
+    "cards": {
+      "style": "background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.02);",
+      "dashboard_cards": "padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; height: 100%; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-surface);"
+    },
+    "inputs": {
+      "style": "background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-primary); width: 100%; font-family: 'DM Sans', sans-serif;",
+      "focus": "outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px var(--accent-light);"
+    },
+    "accordion": {
+      "style": "border-bottom: 1px solid var(--border-color); padding: 1.5rem 0;",
+      "title": "font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.25rem; font-weight: 500; color: var(--text-primary); cursor: pointer;"
+    }
+  },
+  "icons": {
+    "library": "lucide-react",
+    "stroke_width": 1.5,
+    "size": 24,
+    "replacements": {
+      "📞": "PhoneCall / Phone",
+      "📅": "Calendar",
+      "💬": "MessageSquare",
+      "⭐": "Star",
+      "🤖": "Bot"
+    },
+    "instruction": "Completely remove ALL emojis from the UI. Replace them with lucide-react components styled with strokeWidth={1.5} and color matching the text or accent color context."
+  },
+  "media": {
+    "hero_background_or_feature": {
+      "url": "https://images.pexels.com/photos/36123565/pexels-photo-36123565.jpeg",
+      "description": "Minimal modern office desk. Use this to anchor the feature grid or as a subtle image block in the marketing pages to ground the AI in physical reality."
+    },
+    "testimonial_portrait": {
+      "url": "https://images.pexels.com/photos/27086922/pexels-photo-27086922.jpeg",
+      "description": "Professional business portrait. Use in the marketing testimonial or about section to build trust."
+    },
+    "about_or_receptionist_context": {
+      "url": "https://images.unsplash.com/photo-1484863137850-59afcfe05386",
+      "description": "Friendly receptionist/business owner smiling. Perfect for the 'Meet your AI' or 'Small Business Owners' context."
+    }
+  },
+  "testing_requirements": {
+    "data_testid": "All interactive and key informational elements MUST include a data-testid attribute in kebab-case format based on role (e.g., data-testid='pricing-upgrade-button', data-testid='login-submit-button')."
+  },
+  "instructions_to_main_agent": [
+    "1. CREATE GLOBAL CSS: Since Tailwind is not installed, create or modify the global css file (e.g., globals.css or styles.css) to include the CSS variables mapped in `color_palette.css_variables` under the `:root` selector. Add the `@import` for the Google Fonts defined in `typography.google_fonts_url`.",
+    "2. STRIP GRADIENTS & EMOJIS: Thoroughly scan the codebase for inline styles using `linear-gradient` (especially the blue/purple #3b82f6 -> #8b5cf6 ones) and replace them with flat `var(--bg-primary)` or `var(--bg-surface)`. Hunt down all emojis (📞📅💬⭐🤖) and replace them with imported `lucide-react` icons.",
+    "3. IMPLEMENT LIGHT THEME: The app is currently a #0a0a0a dark theme. Change the global body background to `var(--bg-primary)` and global text color to `var(--text-primary)`.",
+    "4. UPDATE TYPOGRAPHY: Ensure `fontFamily: 'Bricolage Grotesque', sans-serif` is strictly applied to headings (H1-H6, feature titles, card headers) and `DM Sans` is used for body text, inputs, and buttons.",
+    "5. REFACTOR INLINE STYLES: Update component inline style objects across the Marketing, Pricing, Auth, and Dashboard pages to reference the newly injected CSS variables. Strip out heavy drop shadows and replace with the 1px solid `var(--border-color)` approach.",
+    "6. APPLY LAYOUT PATTERNS: Enforce generous padding on marketing sections and a strict, grid-like alignment for the Dashboard. Dashboard should use the off-white background with pure white cards.",
+    "7. DATA-TESTID IMPLEMENTATION: Add appropriate `data-testid` properties to every single button, link, and form input for testability.",
+    "8. PRESERVE FUNCTIONALITY: Absolutely do not alter or remove the functional logic for Stripe checkouts, Supabase authentication state, or the AI chat demo."
+  ]
+}
