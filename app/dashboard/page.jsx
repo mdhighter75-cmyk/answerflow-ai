@@ -1,14 +1,31 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { createBrowserSupabase } from '../../lib/supabaseClient';
 
 export default function Dashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [messages, setMessages] = useState([{ role: 'assistant', content: "Hello! I'm your AI receptionist. How can I help you today?" }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: '', hours: '', services: '', phone: '', address: '', greeting: '', faqs: '' });
   const [saved, setSaved] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [upgrading, setUpgrading] = useState('');
+  const [billingError, setBillingError] = useState('');
+
+  useEffect(() => {
+    const supabase = createBrowserSupabase();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user) {
+        setUserEmail(data.user.email);
+      } else {
+        router.push('/login');
+      }
+    });
+  }, [router]);
 
   const send = async () => {
     if (!input.trim()) return;
@@ -26,16 +43,23 @@ export default function Dashboard() {
   };
 
   const handleUpgrade = async (plan) => {
+    if (upgrading) return;
+    setBillingError('');
+    setUpgrading(plan);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan, email: 'user@example.com' })
+        body: JSON.stringify({ plan, email: userEmail || undefined })
       });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
-    } catch {
-      alert('Checkout failed. Please try again.');
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || 'Unable to start checkout.');
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      setBillingError(err.message || 'Checkout failed. Please try again.');
+      setUpgrading('');
     }
   };
 
@@ -138,13 +162,14 @@ export default function Dashboard() {
           <>
             <h1 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '8px' }}>Billing & Plans</h1>
             <p style={{ color: '#9ca3af', marginBottom: '32px' }}>You are currently on the free trial.</p>
+            {billingError && <div data-testid="billing-error" style={{ background: '#450a0a', border: '1px solid #7f1d1d', borderRadius: '8px', padding: '12px', marginBottom: '20px', color: '#fca5a5', fontSize: '14px', maxWidth: '640px' }}>{billingError}</div>}
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
               {[['Starter', '$49/mo', '100 calls/month', 'starter'], ['Pro', '$149/mo', '500 calls/month', 'pro'], ['Business', '$299/mo', 'Unlimited calls', 'business']].map(([name, price, calls, plan]) => (
                 <div key={name} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '24px', minWidth: '200px' }}>
                   <h3 style={{ fontWeight: '700', marginBottom: '8px' }}>{name}</h3>
                   <div style={{ fontSize: '28px', fontWeight: '800', marginBottom: '8px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{price}</div>
                   <p style={{ color: '#9ca3af', fontSize: '13px', marginBottom: '16px' }}>{calls}</p>
-                  <button onClick={() => handleUpgrade(plan)} style={{ width: '100%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px', fontWeight: '600', cursor: 'pointer' }}>Upgrade</button>
+                  <button data-testid={`upgrade-${plan}-button`} onClick={() => handleUpgrade(plan)} disabled={!!upgrading} style={{ width: '100%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px', fontWeight: '600', cursor: upgrading ? 'not-allowed' : 'pointer', opacity: upgrading && upgrading !== plan ? 0.5 : 1 }}>{upgrading === plan ? 'Redirecting…' : 'Upgrade'}</button>
                 </div>
               ))}
             </div>
