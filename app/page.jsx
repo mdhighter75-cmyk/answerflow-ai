@@ -1,89 +1,144 @@
 import Header from '../components/Header';
 import PricingCards from '../components/PricingCards';
+import Faq from '../components/Faq';
 import Link from 'next/link';
+import { PhoneCall, CalendarCheck, MessagesSquare, StickyNote, BarChart3, SlidersHorizontal, ArrowRight, Check } from 'lucide-react';
+
+const features = [
+  { Icon: PhoneCall, title: 'Answers every call', desc: 'Your AI picks up instantly, day or night. Zero missed opportunities, zero voicemail.' },
+  { Icon: CalendarCheck, title: 'Books appointments', desc: 'Customers schedule directly with your AI. Syncs to your calendar automatically.' },
+  { Icon: MessagesSquare, title: 'Answers questions', desc: 'Trained on your hours, services, pricing and FAQs. Always accurate, always on-brand.' },
+  { Icon: StickyNote, title: 'Takes messages', desc: 'When something needs you, the AI captures a message and notifies you right away.' },
+  { Icon: BarChart3, title: 'Call dashboard', desc: 'Clear summaries of every call. Track questions, appointments and follow-ups.' },
+  { Icon: SlidersHorizontal, title: 'Fully customizable', desc: 'Set your greeting, services, hours and tone. Your AI sounds like your business.' },
+];
 
 export default function Home() {
   return (
     <>
       <Header />
-      <section style={{ textAlign: 'center', padding: '100px 24px 80px', maxWidth: '900px', margin: '0 auto' }}>
-        <div style={{ display: 'inline-block', background: '#1f2937', border: '1px solid #374151', borderRadius: '20px', padding: '6px 16px', fontSize: '13px', color: '#60a5fa', fontWeight: '600', letterSpacing: '1px', marginBottom: '24px' }}>AI-POWERED BUSINESS RECEPTIONIST</div>
-        <h1 style={{ fontSize: '64px', fontWeight: '900', lineHeight: '1.1', marginBottom: '24px', letterSpacing: '-2px' }}>
-          Never Miss Another{' '}
-          <span style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Customer Call</span>
-        </h1>
-        <p style={{ fontSize: '20px', color: '#9ca3af', lineHeight: '1.6', marginBottom: '40px', maxWidth: '600px', margin: '0 auto 40px' }}>
-          AnswerFlow AI answers your business calls 24/7, books appointments, answers customer questions, and never takes a day off.
-        </p>
-        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/signup" style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', padding: '16px 36px', borderRadius: '10px', textDecoration: 'none', fontSize: '17px', fontWeight: '700' }}>Start Free Trial</Link>
-          <Link href="/pricing" style={{ background: 'transparent', border: '1px solid #374151', color: '#d1d5db', padding: '16px 36px', borderRadius: '10px', textDecoration: 'none', fontSize: '17px', fontWeight: '600' }}>See Pricing</Link>
+
+      {/* Hero */}
+      <section style={{ position: 'relative', overflow: 'hidden' }}>
+        <div className="grid-lines" style={{ position: 'absolute', inset: 0, opacity: 0.5, pointerEvents: 'none' }} />
+        <div className="container" style={{ position: 'relative', display: 'grid', gridTemplateColumns: 'minmax(0,1.05fr) minmax(0,0.95fr)', gap: '56px', alignItems: 'center', padding: '88px 24px 96px' }}>
+          <div className="fade-up">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '20px', padding: '6px 14px', marginBottom: '28px' }}>
+              <span className="live-dot" />
+              <span className="eyebrow">AI receptionist · answering now</span>
+            </div>
+            <h1 style={{ fontSize: 'clamp(2.6rem, 5.2vw, 4.1rem)' }}>
+              Never miss another<br /><span style={{ color: 'var(--accent-primary)' }}>customer call.</span>
+            </h1>
+            <p style={{ fontSize: '19px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '24px 0 36px', maxWidth: '480px' }}>
+              AnswerFlow answers your business calls 24/7 — books appointments, answers questions, and never takes a day off.
+            </p>
+            <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+              <Link href="/signup" data-testid="hero-cta-primary" className="btn btn-primary">Start free trial <ArrowRight size={18} strokeWidth={2} /></Link>
+              <Link href="/pricing" data-testid="hero-cta-secondary" className="btn btn-secondary">See pricing</Link>
+            </div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Check size={16} strokeWidth={2} color="var(--accent-primary)" /> No credit card required · Cancel anytime
+            </p>
+          </div>
+
+          {/* Mock live-call card */}
+          <div className="fade-up card" style={{ animationDelay: '.12s', padding: '0', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '16px 20px', borderBottom: '1px solid var(--border-color)' }}>
+              <span style={{ width: '34px', height: '34px', borderRadius: '9px', background: 'var(--accent-light)', display: 'grid', placeItems: 'center' }}><PhoneCall size={17} strokeWidth={1.75} color="var(--accent-primary)" /></span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 600, fontSize: '14px' }}>Incoming call</div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>Bright Smile Dental</div>
+              </div>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--success)', fontWeight: 600 }}><span className="live-dot" /> Live</span>
+            </div>
+            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'var(--bg-primary)' }}>
+              {[
+                { who: 'caller', text: 'Hi, do you have any openings this Friday?' },
+                { who: 'ai', text: "We do! I have 10:30am or 2:15pm on Friday. Which works best for you?" },
+                { who: 'caller', text: '2:15 is perfect.' },
+                { who: 'ai', text: "Booked — I'll text you a confirmation. Anything else I can help with?" },
+              ].map((m, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: m.who === 'caller' ? 'flex-start' : 'flex-end' }}>
+                  <div style={{ maxWidth: '82%', padding: '10px 14px', fontSize: '14px', lineHeight: 1.5,
+                    borderRadius: m.who === 'caller' ? '4px 14px 14px 14px' : '14px 4px 14px 14px',
+                    background: m.who === 'caller' ? 'var(--bg-surface)' : 'var(--accent-primary)',
+                    color: m.who === 'caller' ? 'var(--text-primary)' : '#fff',
+                    border: m.who === 'caller' ? '1px solid var(--border-color)' : 'none' }}>{m.text}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <p style={{ color: '#6b7280', fontSize: '14px', marginTop: '16px' }}>No credit card required · Cancel anytime</p>
       </section>
 
-      <section style={{ background: '#111827', padding: '60px 24px', borderTop: '1px solid #1f2937', borderBottom: '1px solid #1f2937' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '80px', flexWrap: 'wrap', maxWidth: '900px', margin: '0 auto' }}>
-          {[['24/7', 'Always Available'], ['< 1s', 'Response Time'], ['99.9%', 'Uptime'], ['500+', 'Businesses Served']].map(([num, label]) => (
-            <div key={label} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '40px', fontWeight: '900', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{num}</div>
-              <div style={{ color: '#9ca3af', fontSize: '14px', marginTop: '4px' }}>{label}</div>
+      {/* Stats */}
+      <section style={{ borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-surface)' }}>
+        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '24px', padding: '44px 24px' }}>
+          {[['24/7', 'Always available'], ['< 1s', 'Response time'], ['99.9%', 'Uptime'], ['500+', 'Businesses served']].map(([num, label]) => (
+            <div key={label}>
+              <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: '38px', fontWeight: 700, letterSpacing: '-0.03em', color: 'var(--accent-primary)' }}>{num}</div>
+              <div style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '2px' }}>{label}</div>
             </div>
           ))}
         </div>
       </section>
 
-      <section style={{ padding: '100px 24px', maxWidth: '1100px', margin: '0 auto' }}>
-        <h2 style={{ textAlign: 'center', fontSize: '44px', fontWeight: '800', marginBottom: '64px', letterSpacing: '-1px' }}>Everything Your Business Needs</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-          {[
-            { icon: '📞', title: 'Answers Every Call', desc: 'Your AI picks up every call instantly, day or night. Zero missed opportunities.' },
-            { icon: '📅', title: 'Books Appointments', desc: 'Customers schedule directly with your AI. Syncs with your calendar automatically.' },
-            { icon: '💬', title: 'Answers Questions', desc: 'Trained on your business info — hours, services, pricing, FAQs. Always accurate.' },
-            { icon: '📝', title: 'Takes Messages', desc: 'When something needs your attention, the AI takes a message and notifies you.' },
-            { icon: '📊', title: 'Call Dashboard', desc: 'See summaries of every call. Track questions, appointments, and messages.' },
-            { icon: '🔧', title: 'Fully Customizable', desc: 'Set your greeting, services, hours, and tone. Your AI sounds like your brand.' },
-          ].map((f) => (
-            <div key={f.title} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: '16px', padding: '28px' }}>
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>{f.icon}</div>
-              <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>{f.title}</h3>
-              <p style={{ color: '#9ca3af', fontSize: '15px', lineHeight: '1.6' }}>{f.desc}</p>
+      {/* Features */}
+      <section className="container" style={{ padding: '96px 24px' }}>
+        <span className="eyebrow">What it does</span>
+        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '12px', marginBottom: '52px', maxWidth: '640px' }}>Everything your front desk does — automated.</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+          {features.map(({ Icon, title, desc }) => (
+            <div key={title} className="card card-hover" style={{ padding: '28px' }}>
+              <span style={{ width: '44px', height: '44px', borderRadius: '11px', background: 'var(--accent-light)', display: 'grid', placeItems: 'center', marginBottom: '18px' }}>
+                <Icon size={22} strokeWidth={1.5} color="var(--accent-primary)" />
+              </span>
+              <h3 style={{ fontSize: '19px', marginBottom: '9px' }}>{title}</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '15px', lineHeight: 1.6 }}>{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section style={{ padding: '80px 24px', background: '#0d0d0d' }}>
-        <h2 style={{ textAlign: 'center', fontSize: '44px', fontWeight: '800', marginBottom: '56px', letterSpacing: '-1px' }}>Simple, Transparent Pricing</h2>
+      {/* Pricing */}
+      <section style={{ background: 'var(--bg-surface)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', padding: '96px 24px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+          <span className="eyebrow">Pricing</span>
+          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '12px' }}>Simple, honest pricing.</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '17px', marginTop: '12px' }}>No hidden fees. Cancel anytime.</p>
+        </div>
         <PricingCards />
       </section>
 
-      <section style={{ padding: '100px 24px', maxWidth: '700px', margin: '0 auto' }}>
-        <h2 style={{ textAlign: 'center', fontSize: '44px', fontWeight: '800', marginBottom: '56px', letterSpacing: '-1px' }}>Frequently Asked Questions</h2>
-        {[
-          { q: 'How does the AI answer calls?', a: 'AnswerFlow AI connects to your phone number. When a customer calls, our AI answers instantly and handles the conversation based on your business info.' },
-          { q: 'Can I use my existing phone number?', a: 'Yes! We can forward your existing number to AnswerFlow AI, or you can get a new number through our platform.' },
-          { q: 'Can it book appointments?', a: 'Absolutely. The AI can check availability and book appointments directly, sending confirmations to both you and the customer.' },
-          { q: 'Can I customize what it says?', a: 'Yes. You set the greeting, services list, FAQs, and tone. Your AI sounds exactly how you want it to.' },
-          { q: 'How secure is my data?', a: 'All data is encrypted at rest and in transit. We use industry-standard security and never sell your data.' },
-        ].map((item) => (
-          <div key={item.q} style={{ borderBottom: '1px solid #1f2937', padding: '24px 0' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '10px' }}>{item.q}</h3>
-            <p style={{ color: '#9ca3af', fontSize: '15px', lineHeight: '1.7' }}>{item.a}</p>
+      {/* FAQ */}
+      <section className="container" style={{ padding: '96px 24px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <span className="eyebrow">FAQ</span>
+          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '12px' }}>Frequently asked questions</h2>
+        </div>
+        <Faq />
+      </section>
+
+      {/* CTA */}
+      <section style={{ padding: '24px' }}>
+        <div className="container" style={{ background: 'var(--accent-primary)', borderRadius: '20px', padding: '72px 32px', textAlign: 'center' }}>
+          <h2 style={{ color: '#fff', fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '14px' }}>Ready to never miss a call again?</h2>
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '17px', marginBottom: '32px' }}>Join hundreds of businesses using AnswerFlow.</p>
+          <Link href="/signup" data-testid="footer-cta" className="btn" style={{ background: '#fff', color: 'var(--accent-primary)' }}>Start your free trial <ArrowRight size={18} strokeWidth={2} /></Link>
+          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginTop: '16px' }}>No credit card required</p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ borderTop: '1px solid var(--border-color)', padding: '40px 24px' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+            <span style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--accent-primary)', display: 'grid', placeItems: 'center' }}><PhoneCall size={15} strokeWidth={2} color="#fff" /></span>
+            <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: '18px', fontWeight: 700 }}>AnswerFlow</span>
           </div>
-        ))}
-      </section>
-
-      <section style={{ textAlign: 'center', padding: '100px 24px', background: 'linear-gradient(135deg, #0f172a, #1e1b4b)' }}>
-        <h2 style={{ fontSize: '48px', fontWeight: '900', marginBottom: '16px', letterSpacing: '-1px' }}>Ready to Never Miss a Call Again?</h2>
-        <p style={{ color: '#9ca3af', fontSize: '18px', marginBottom: '36px' }}>Join hundreds of businesses using AnswerFlow AI.</p>
-        <Link href="/signup" style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', padding: '18px 48px', borderRadius: '12px', textDecoration: 'none', fontSize: '18px', fontWeight: '700' }}>Start Your Free Trial</Link>
-        <p style={{ color: '#6b7280', fontSize: '14px', marginTop: '16px' }}>No credit card required</p>
-      </section>
-
-      <footer style={{ background: '#0a0a0a', borderTop: '1px solid #1f2937', padding: '40px 24px', textAlign: 'center' }}>
-        <div style={{ fontSize: '20px', fontWeight: '800', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '16px' }}>AnswerFlow AI</div>
-        <p style={{ color: '#6b7280', fontSize: '14px' }}>© 2026 AnswerFlow AI. All rights reserved.</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>© 2026 AnswerFlow AI. All rights reserved.</p>
+        </div>
       </footer>
     </>
   );

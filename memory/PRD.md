@@ -8,13 +8,8 @@ Stack: Next.js + Supabase (auth + DB) + Stripe (subscriptions) + OpenAI + Twilio
 "Upgrade button not working + scan for bugs." Then: wire webhook → Supabase and persist Business Settings.
 
 ## Implemented (2026-06)
-- Fixed the Upgrade button: lazy Stripe client, robust checkout route (plan validation, origin-based
-  redirect URLs, session metadata), client-side error surfacing + loading/anti-double-click, real
-  logged-in email, dashboard auth guard.
-- Added `.gitignore`, `.env.example`, `BUG_SCAN_REPORT.md`.
-- Stripe webhook now persists plan to a new `subscriptions` table; cancellations mark status canceled.
-- Business Settings load from + save to Supabase `businesses` (upsert on user_id).
-- Dashboard shows live plan (Overview card + Billing "Current Plan").
+- Fixed the Upgrade button (Stripe checkout), subscription persistence (webhook → Supabase), and Business Settings persistence.
+- **Full visual redesign** ("Old Money Tech" premium light theme): Alabaster bg + deep forest green accents, Bricolage Grotesque + DM Sans fonts, lucide-react icons (emojis removed), flat bordered cards, editorial asymmetric hero with a live-call mock, micro-animations. Applied across landing, pricing, login, signup, dashboard, receptionist demo. Design system lives in `app/globals.css` (CSS variables + component classes). Blueprint: `design_guidelines.json`.
 
 ## Required config (set in Vercel env + run schema.sql)
 STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, NEXT_PUBLIC_STRIPE_{STARTER,PRO,BUSINESS}_PRICE_ID,

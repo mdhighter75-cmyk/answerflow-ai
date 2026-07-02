@@ -1,21 +1,23 @@
 'use client';
 import Link from 'next/link';
+import { PhoneCall } from 'lucide-react';
 
 export default function Header() {
   return (
-    <header style={{ background: '#0a0a0a', borderBottom: '1px solid #1a1a2e', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100 }}>
-      <Link href="/" style={{ textDecoration: 'none' }}>
-        <span style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-          AnswerFlow AI
-        </span>
-      </Link>
-      <nav style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-        <Link href="/pricing" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '15px' }}>Pricing</Link>
-        <Link href="/login" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '15px' }}>Login</Link>
-        <Link href="/signup" style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', padding: '8px 20px', borderRadius: '8px', textDecoration: 'none', fontSize: '15px', fontWeight: '600' }}>
-          Start Free Trial
+    <header data-testid="site-header" style={{ background: 'rgba(244,244,240,0.8)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border-color)', position: 'sticky', top: 0, zIndex: 100 }}>
+      <div className="container" style={{ height: '68px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Link href="/" data-testid="logo-link" style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+          <span style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'var(--accent-primary)', display: 'grid', placeItems: 'center' }}>
+            <PhoneCall size={17} strokeWidth={2} color="#fff" />
+          </span>
+          <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>AnswerFlow</span>
         </Link>
-      </nav>
+        <nav style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
+          <Link href="/pricing" data-testid="nav-pricing" style={{ color: 'var(--text-secondary)', fontSize: '15px', fontWeight: 500 }}>Pricing</Link>
+          <Link href="/login" data-testid="nav-login" style={{ color: 'var(--text-secondary)', fontSize: '15px', fontWeight: 500 }}>Login</Link>
+          <Link href="/signup" data-testid="nav-signup" className="btn btn-primary" style={{ padding: '9px 18px', fontSize: '14px' }}>Start free trial</Link>
+        </nav>
+      </div>
     </header>
   );
 }

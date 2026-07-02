@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { Check } from 'lucide-react';
 
 const plans = [
   { name: 'Starter', price: 49, features: ['100 calls/month', 'AI chat receptionist', 'Call summaries', 'Email notifications', '1 business profile'], highlight: false },
@@ -9,24 +10,29 @@ const plans = [
 
 export default function PricingCards() {
   return (
-    <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', flexWrap: 'wrap', padding: '0 24px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', maxWidth: '980px', margin: '0 auto', alignItems: 'stretch' }}>
       {plans.map((plan) => (
-        <div key={plan.name} style={{ background: plan.highlight ? 'linear-gradient(135deg, #1e3a5f, #2d1b69)' : '#111827', border: plan.highlight ? '2px solid #3b82f6' : '1px solid #1f2937', borderRadius: '16px', padding: '32px', width: '300px', position: 'relative' }}>
-          {plan.highlight && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: '#fff', padding: '4px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '700' }}>MOST POPULAR</div>}
-          <h3 style={{ color: '#f9fafb', fontSize: '22px', fontWeight: '700', marginBottom: '8px' }}>{plan.name}</h3>
-          <div style={{ marginBottom: '24px' }}>
-            <span style={{ color: '#f9fafb', fontSize: '48px', fontWeight: '800' }}>${plan.price}</span>
-            <span style={{ color: '#6b7280', fontSize: '16px' }}>/month</span>
+        <div key={plan.name} data-testid={`pricing-card-${plan.name.toLowerCase()}`} className="card"
+          style={{ padding: '32px', position: 'relative', display: 'flex', flexDirection: 'column',
+            border: plan.highlight ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-color)',
+            background: plan.highlight ? 'var(--accent-light)' : 'var(--bg-surface)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '10px', minHeight: '26px' }}>
+            <h3 style={{ fontSize: '22px' }}>{plan.name}</h3>
+            {plan.highlight && <span style={{ background: 'var(--accent-primary)', color: '#fff', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Most popular</span>}
           </div>
-          <ul style={{ listStyle: 'none', padding: 0, marginBottom: '28px' }}>
+          <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+            <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: '46px', fontWeight: 700, letterSpacing: '-0.03em' }}>${plan.price}</span>
+            <span style={{ color: 'var(--text-secondary)', fontSize: '15px' }}>/month</span>
+          </div>
+          <ul style={{ listStyle: 'none', marginBottom: '28px', display: 'flex', flexDirection: 'column', gap: '11px', flex: 1 }}>
             {plan.features.map((f) => (
-              <li key={f} style={{ color: '#d1d5db', fontSize: '14px', padding: '6px 0', display: 'flex', gap: '8px' }}>
-                <span style={{ color: '#3b82f6', fontWeight: '700' }}>✓</span> {f}
+              <li key={f} style={{ color: 'var(--text-secondary)', fontSize: '14.5px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                <Check size={18} strokeWidth={2} color="var(--accent-primary)" style={{ flexShrink: 0, marginTop: '1px' }} /> {f}
               </li>
             ))}
           </ul>
-          <Link href="/signup" style={{ display: 'block', textAlign: 'center', background: plan.highlight ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' : 'transparent', border: plan.highlight ? 'none' : '1px solid #374151', color: '#fff', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: '600' }}>
-            Start Free Trial
+          <Link href="/signup" data-testid={`pricing-cta-${plan.name.toLowerCase()}`} className={`btn ${plan.highlight ? 'btn-primary' : 'btn-secondary'}`} style={{ width: '100%' }}>
+            Start free trial
           </Link>
         </div>
       ))}
